@@ -3,12 +3,10 @@ require("dotenv").config();
 const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(cors());
 app.use(express.json());
 const password = process.env.USER_PASSWORD;
-console.log(password);
-
 const uri = `mongodb+srv://resan6231:${password}@cluster0.absippg.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -30,6 +28,13 @@ async function run() {
     app.get("/users", async (req, res) => {
       const allUsers = crudUser.find();
       const result = await allUsers.toArray();
+      res.send(result);
+    });
+
+    app.delete("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await crudUser.deleteOne(query);
       res.send(result);
     });
 
